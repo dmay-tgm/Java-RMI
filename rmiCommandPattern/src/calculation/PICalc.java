@@ -33,8 +33,18 @@ package calculation;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+/**
+ * Calculates Pi with an adjustable amount of digits.
+ * 
+ * @author Daniel May
+ * @version 20160317.1
+ *
+ */
 public class PICalc implements Calculation, Serializable {
 
+	/**
+	 * serial id
+	 */
 	private static final long serialVersionUID = 227L;
 
 	/** constants used in pi computation */
@@ -46,10 +56,16 @@ public class PICalc implements Calculation, Serializable {
 	/** digits of precision after the decimal point */
 	private final int digits;
 
+	/**
+	 * stores the result
+	 */
 	private BigDecimal result;
 
 	/**
 	 * Construct a task to calculate pi to the specified precision.
+	 * 
+	 * @param digits
+	 *            amount of digits
 	 */
 	public PICalc(int digits) {
 		this.digits = digits;
@@ -62,6 +78,10 @@ public class PICalc implements Calculation, Serializable {
 	 * pi/4 = 4*arctan(1/5) - arctan(1/239)
 	 *
 	 * and a power series expansion of arctan(x) to sufficient precision.
+	 * 
+	 * @param digits
+	 *            amount of digits
+	 * @return pi
 	 */
 	public static BigDecimal computePi(int digits) {
 		int scale = digits + 5;
@@ -78,6 +98,10 @@ public class PICalc implements Calculation, Serializable {
 	 * tangent:
 	 *
 	 * arctan(x) = x - (x^3)/3 + (x^5)/5 - (x^7)/7 + (x^9)/9 ...
+	 * 
+	 * @param inverseX
+	 * @param scale
+	 * @return the arctan fucntion
 	 */
 	public static BigDecimal arctan(int inverseX, int scale) {
 		BigDecimal result, numer, term;
@@ -102,11 +126,21 @@ public class PICalc implements Calculation, Serializable {
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see calculation.Calculation#calculate()
+	 */
 	@Override
 	public void calculate() {
 		result = computePi(digits);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see calculation.Calculation#getResult()
+	 */
 	@Override
 	public BigDecimal getResult() {
 		return result;

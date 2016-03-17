@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package engine;
 
@@ -37,31 +37,61 @@ import java.rmi.server.UnicastRemoteObject;
 import compute.Compute;
 import compute.Task;
 
+/**
+ * The server side class that generates an object that can be called from
+ * clients in order to execute tasks.
+ * 
+ * @author Daniel May
+ * @version 20160311.1
+ */
 public class ComputeEngine implements Compute {
 
-    public ComputeEngine() {
-        super();
-    }
+	/**
+	 * constructor
+	 */
+	public ComputeEngine() {
+		super();
+	}
 
-    public <T> T executeTask(Task<T> t) {
-        return t.execute();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see compute.Compute#executeTask(compute.Task)
+	 */
+	@Override
+	public <T> T executeTask(Task<T> t) {
+		return t.execute();
+	}
 
-    public static void main(String[] args) {
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new SecurityManager());
-        }
-        try {
-            String name = "Compute";
-            Compute engine = new ComputeEngine();
-            Compute stub =
-                (Compute) UnicastRemoteObject.exportObject(engine, 0);
-            Registry registry = LocateRegistry.createRegistry(1099);
-            registry.rebind(name, stub);
-            System.out.println("ComputeEngine bound");
-        } catch (Exception e) {
-            System.err.println("ComputeEngine exception:");
-            e.printStackTrace();
-        }
-    }
+	/**
+	 * main fucntion to start the server side
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// generate SecurityManager if it doesn't exist
+		if (System.getSecurityManager() == null) {
+			System.setSecurityManager(new SecurityManager());
+		}
+		try {
+			// local server object
+			Compute engine = new ComputeEngine();
+			// export the object, now it can be called from everyone that has a
+			// reference to this object
+			Compute stub = (Compute) UnicastRemoteObject.exportObject(engine, 0);
+			// create registry with standard port 1099
+			Registry registry = LocateRegistry.createRegistry(1099);
+			// bind the stub to the name Compute
+			registry.rebind("Compute", stub);
+			// success message
+			System.out.println("Service bound! Press Enter to terminate ...");
+			// wait until enter is pressed then unexport the object
+			while (System.in.read() != '\n')
+				;
+			UnicastRemoteObject.unexportObject(engine, true);
+		} catch (Exception e) {
+			System.err.println("ComputeEngine exception:");
+			e.printStackTrace();
+		}
+	}
 }

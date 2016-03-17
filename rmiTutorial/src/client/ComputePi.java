@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package client;
 
@@ -36,21 +36,40 @@ import java.rmi.registry.Registry;
 import java.math.BigDecimal;
 import compute.Compute;
 
+/**
+ * Simple class that uses a distributed object in order to calculate Pi.
+ * 
+ * @author Daniel May
+ * @version 20160311.1
+ *
+ */
 public class ComputePi {
-    public static void main(String args[]) {
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new SecurityManager());
-        }
-        try {
-            String name = "Compute";
-            Registry registry = LocateRegistry.getRegistry(args[0]);
-            Compute comp = (Compute) registry.lookup(name);
-            Pi task = new Pi(Integer.parseInt(args[1]));
-            BigDecimal pi = comp.executeTask(task);
-            System.out.println(pi);
-        } catch (Exception e) {
-            System.err.println("ComputePi exception:");
-            e.printStackTrace();
-        }
-    }    
+	/**
+	 * starting function for the client
+	 * 
+	 * @param args
+	 *            [1] registry location e.g. localhost [2] number of pi digits
+	 */
+	public static void main(String args[]) {
+		// generate SecurityManager if it doesn't exist
+		if (System.getSecurityManager() == null) {
+			System.setSecurityManager(new SecurityManager());
+		}
+		try {
+			// locate registry
+			Registry registry = LocateRegistry.getRegistry(args[0]);
+			// search for the name Compute and get the reference
+			Compute comp = (Compute) registry.lookup("Compute");
+			// generate new pi task with specified digits
+			Pi task = new Pi(Integer.parseInt(args[1]));
+			// execute the executeTask method on the remote object and get the
+			// result
+			BigDecimal pi = comp.executeTask(task);
+			// print out the result
+			System.out.println(pi);
+		} catch (Exception e) {
+			System.err.println("ComputePi exception:");
+			e.printStackTrace();
+		}
+	}
 }

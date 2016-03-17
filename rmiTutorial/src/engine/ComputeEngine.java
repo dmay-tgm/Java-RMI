@@ -89,6 +89,7 @@ public class ComputeEngine implements Compute {
 			while (System.in.read() != '\n')
 				;
 			UnicastRemoteObject.unexportObject(engine, true);
+			System.out.println("Terminated.");
 		} catch (Exception e) {
 			System.err.println("ComputeEngine exception:");
 			e.printStackTrace();
